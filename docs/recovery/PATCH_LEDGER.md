@@ -1,0 +1,18 @@
+# H200 Patch Ledger
+
+| Component | Status | Requirement and motivation | Historical validation | Current validation required | Confidence |
+|---|---|---|---|---|---|
+| Gemini controller / fail-closed selection | ABSENT | **HISTORICAL RECORD**: use Gemini `gemini-3.5-flash-lite`, temperature 0.2, top-p 0.95; prevent silent GPT-4o fallback. | **HISTORICAL RECORD**: prior audit found unintended GPT-4o resolution. | Static provider/configuration tests and an explicit unsupported-provider failure test. | High |
+| CheXagent and XraySigLIP revisions | ABSENT | **HISTORICAL RECORD**: pin CheXagent and nested vision dependency for provenance. | **HISTORICAL RECORD**: real CXR inference completed. | Acquire pinned artifacts, record hashes, then construction and inference validation. | High |
+| CheXagent DynamicCache adapter | ABSENT | **HISTORICAL RECORD**: Transformers 4.51.3 lacks `DynamicCache.get_max_length`; a naive alias may break image prefill. | **HISTORICAL RECORD**: adapter contract and real CXR inference passed. | Unit contract for prefill/decode plus targeted real inference. | Medium |
+| LLaVA-Med nested CLIP cache propagation | PARTIAL | **CURRENTLY VERIFIED**: main LLaVA loaders accept `cache_dir`; `clip_encoder.py` does not pass it to CLIP loaders. | **HISTORICAL RECORD**: explicit cache propagation was added in the lost workspace. | Static cache-path test and offline construction from pinned cache. | High |
+| CheXpert explicit findings/impression paths and revisions | ABSENT | **CURRENTLY VERIFIED**: upstream has only one shared `cache_dir`; **HISTORICAL RECORD**: separate explicit local paths were needed. | **HISTORICAL RECORD**: change was previously made. | Path-resolution tests and report inference against pinned artifacts. | High |
+| ChestX-Det checkpoint checksum | ABSENT | **HISTORICAL RECORD**: verify PSPNet checkpoint integrity. | **HISTORICAL RECORD**: checkpoint was validated. | Obtain artifact and compare full SHA-256 before inference. | High |
+| ChestAgentBench identifier adapter | ABSENT | **HISTORICAL RECORD**: expose only case-valid image IDs; resolve to canonical paths immediately before tools. | **HISTORICAL RECORD**: B1 ran with no rejected calls. | Validation for cross-case, remote, basename, and raw-path rejection. | High |
+| B1 benchmark runner | ABSENT | **HISTORICAL RECORD**: reproduce the 25-case controlled contract. | **HISTORICAL RECORD**: 16/25 and 71/71 successful calls. | Deterministic selection, evidence logging, and fresh run. | Medium |
+| B2 exclusive worker lock | ABSENT | **HISTORICAL RECORD**: reject a live owner; never silently steal stale locks. | **HISTORICAL RECORD**: recovery design introduced this protection. | Concurrent-owner and stale-lock policy tests. | High |
+| Atomic selection/checkpoint writes | ABSENT | **HISTORICAL RECORD**: temp file, fsync, replace, and directory fsync protect state. | **HISTORICAL RECORD**: B2 recovery design specified it. | Fault-injection and restart validation. | High |
+| Fresh R2 namespace / deterministic selection | ABSENT | **HISTORICAL RECORD**: use a clean R2 output path and recorded selection SHA. | **HISTORICAL RECORD**: R2 preflight reported ready; inference never launched. | Zero-inference preflight and hash comparison. | High |
+| Reproducibility manifests and experiment evidence | ABSENT | **CURRENTLY VERIFIED**: no lockfile/environment manifest or H200 evidence artifacts exist. | **HISTORICAL RECORD**: environment and gates were previously qualified. | Create manifests, integrity ledgers, and per-gate evidence. | High |
+
+**NOT YET VERIFIED**: Exact historical diffs are unavailable; this ledger deliberately does not claim code equivalence.

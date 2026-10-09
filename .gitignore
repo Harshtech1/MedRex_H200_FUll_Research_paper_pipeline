@@ -172,3 +172,6 @@ logs/
 temp/
 
 .gradio/
+
+# Acquired benchmark dataset; preserved outside source control.
+/chestagentbench/
